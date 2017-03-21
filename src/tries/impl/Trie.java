@@ -8,6 +8,7 @@ public class Trie implements ITrie
 {
     public Trie() {
         // TODO Write constructor
+        throw new UnsupportedOperationException("TODO: replace this line with actual code");
     }
     
     /* (non-Javadoc)
