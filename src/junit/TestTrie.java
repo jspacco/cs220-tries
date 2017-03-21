@@ -1,0 +1,162 @@
+package junit;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.Scanner;
+import java.util.Set;
+
+import org.junit.Test;
+
+import tries.ITrie;
+import tries.impl.Trie;
+//import tries.sol.Trie;
+
+
+public class TestTrie
+{
+    // testing helper function to create a dictionary
+    private ITrie readDictionary() throws Exception {
+        ITrie root=new Trie();
+        Scanner scanner=new Scanner(new FileInputStream("dictionary.txt"));
+        while (scanner.hasNext()) {
+            String word=scanner.next().toLowerCase();
+            root.insert(word);
+        }
+        scanner.close();
+        return root;
+    }
+    
+    @Test
+    public void testInsertDoesNotCrash() throws Exception {
+        ITrie t = new Trie();
+        t.insert("dog");
+    }
+    
+    @Test
+    public void testHasChild() throws Exception {
+        ITrie t = new Trie();
+        t.insert("dog");
+        assertTrue(t.hasChild('d'));
+        for (char ch = 'a'; ch <= 'z'; ch++){
+            if (ch == 'd'){
+                continue;
+            }
+            assertFalse(t.hasChild(ch));
+        }
+    }
+    
+    @Test
+    public void testGetChild() throws Exception {
+        ITrie t = new Trie();
+        t.insert("dog");
+        assertTrue(t.getChild('d')!=null);
+        for (char ch = 'a'; ch <= 'z'; ch++){
+            if (ch == 'd'){
+                continue;
+            }
+            assertEquals(null, t.getChild(ch));
+        }
+    }
+    
+    @Test
+    public void testFollowPath() throws Exception {
+        ITrie t = new Trie();
+        t.insert("dog");
+        t.insert("doctor");
+        t.insert("dogmatic");
+        t.insert("dogmonster");
+        ITrie node = t.followPath("dog");
+        assertTrue(node != null);
+        
+        node = t.followPath("cat");
+        assertTrue(node == null);
+        
+        node = t.followPath("do");
+        assertTrue(node != null);
+        
+        node = t.followPath("dogs");
+        assertTrue(node == null);
+        
+        node = t.followPath("dogma");
+        assertTrue(node != null);
+    }
+    
+    @Test
+    public void testInsertAndContains1() throws Exception {
+        ITrie t=new Trie();
+        t.insert("dog");
+        assertEquals(true, t.contains("dog"));
+        assertEquals(false, t.contains("d"));
+        assertEquals(false, t.contains("do"));
+        assertEquals(false, t.contains("dogs"));
+    }
+    
+    @Test
+    public void testInsertAndContains() throws Exception {
+        ITrie root = readDictionary();
+        assertTrue(root.contains("ably"));
+        assertTrue(root.contains("abnegated"));
+        assertTrue(root.contains("phooey"));
+        assertFalse(root.contains("spacco"));
+        assertFalse(root.contains("gnb"));
+        assertFalse(root.contains("thebibibib"));
+    }
+    
+    @Test
+    public void testAllWords() throws Exception {
+        ITrie root = readDictionary();
+        assertEquals(178691, root.findAllWords().size());
+    }
+    
+    @Test
+    public void testFindStartsWith() throws Exception {
+        ITrie root = readDictionary();
+        Set<String> words=root.findWordsBeginningWith("aard");
+        assertEquals(4, words.size());
+        assertTrue(words.contains("aardvark"));
+        assertTrue(words.contains("aardvarks"));
+        assertTrue(words.contains("aardwolf"));
+        assertTrue(words.contains("aardwolves"));
+    }
+    
+    @Test
+    public void testFindEndsWith() throws Exception {
+        ITrie root = readDictionary();
+        Set<String> words=root.findWordsEndingWith("inging");
+        // assert we get the right number of results
+        assertEquals(49, words.size());
+        // check that a few of the 49 expected results are present
+        for (String s : Arrays.asList("swinging", "hinging", "mudslinging", "kinging", "bringing", "upswinging")){
+            assertTrue(words.contains(s));
+        }
+    }
+    
+    @Test
+    public void testFindContains() throws Exception {
+        ITrie root = readDictionary();
+        Set<String> words=root.findWordsContaining("dog");
+        // check that the size is correct
+        assertEquals(224, words.size());
+        // check that a sample of words with dog are in the results
+        for (String s : new String[] {"dog", "seadogs", "undogmatic", "dogma", "endogenous", "firedog"}){
+            assertTrue(words.contains(s));
+        }
+    }
+    
+    @Test
+    public void testCloseWordsChangedLetters() throws Exception {
+        ITrie root = readDictionary();
+        
+        String word = "soul";
+        Set<String> words = root.findCloseWordsChangedLetters(word, 1);
+        // make sure the set of words is the right size
+        assertEquals(9, words.size());
+        // make sure we have all 9 words
+        for (String s : Arrays.asList("sous", "sour", "soul", "souk", "shul", "soup", "foul", "saul", "soil")){
+            assertTrue(words.contains(s));
+        }
+    }
+}
