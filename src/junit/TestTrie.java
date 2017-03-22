@@ -85,6 +85,24 @@ public class TestTrie
     }
     
     @Test
+    public void testGetParent() throws Exception {
+        ITrie t = new Trie();
+        t.insert("dog");
+        assertTrue(t.getChild('d')!=null);
+        ITrie dNode = t.followPath("d");
+        // make sure that the parent of the 'd' node is the root
+        assertTrue(t == dNode.getParent());
+        
+        ITrie oNode = t.followPath("do");
+        // check the parent of the 'o' node
+        assertTrue(dNode == oNode.getParent());
+        
+        ITrie gNode = t.followPath("dog");
+        // check the parent of the 'g' node
+        assertTrue(oNode == gNode.getParent());
+    }
+    
+    @Test
     public void testInsertAndContains1() throws Exception {
         ITrie t=new Trie();
         t.insert("dog");
@@ -128,7 +146,7 @@ public class TestTrie
         Set<String> words=root.findWordsEndingWith("inging");
         // assert we get the right number of results
         assertEquals(49, words.size());
-        // check that a few of the 49 expected results are present
+        // check that a few results are there
         for (String s : Arrays.asList("swinging", "hinging", "mudslinging", "kinging", "bringing", "upswinging")){
             assertTrue(words.contains(s));
         }
@@ -140,7 +158,7 @@ public class TestTrie
         Set<String> words=root.findWordsContaining("dog");
         // check that the size is correct
         assertEquals(224, words.size());
-        // check that a sample of words with dog are in the results
+        // check that a sample of words with dog are in the 
         for (String s : new String[] {"dog", "seadogs", "undogmatic", "dogma", "endogenous", "firedog"}){
             assertTrue(words.contains(s));
         }
@@ -157,6 +175,20 @@ public class TestTrie
         // make sure we have all 9 words
         for (String s : Arrays.asList("sous", "sour", "soul", "souk", "shul", "soup", "foul", "saul", "soil")){
             assertTrue(words.contains(s));
+        }
+    }
+    
+    @Test
+    public void testCloseWords() throws Exception {
+        ITrie root = readDictionary();
+        
+        String word="dance";
+        int dist=1;
+        
+        Set<String> words=root.findCloseWordsChangedLetters("", dist);
+        System.out.println("There are " +words.size()+" words within "+dist+" of "+word);
+        for (String s : words) {
+            System.out.println(s);
         }
     }
 }

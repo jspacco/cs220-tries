@@ -8,7 +8,6 @@ public class Trie implements ITrie
 {
     public Trie() {
         // TODO Write constructor
-        throw new UnsupportedOperationException("TODO: replace this line with actual code");
     }
     
     /* (non-Javadoc)
@@ -34,6 +33,15 @@ public class Trie implements ITrie
      */
     @Override
     public ITrie getChild(char letter) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    /* (non-Javadoc)
+     * @see tries.ITrie#getParent()
+     */
+    @Override
+    public ITrie getParent() {
         // TODO Auto-generated method stub
         return null;
     }
